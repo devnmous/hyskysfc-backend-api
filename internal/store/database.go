@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"os"
 	"database/sql"
 	"io/fs"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -9,7 +10,11 @@ import (
 )
 
 func Open() (*sql.DB, error) {
-	db, err := sql.Open("pgx", "host=localhost user=hyskysfc password=hyskysfc dbname=hyskysfc port=5432 sslmode=disable")
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		dsn = "host=localhost user=hyskysfc password=hyskysfc dbname=hyskysfc port=5432 sslmode=disable"
+	}
+	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("db: open %w", err)
 	}
